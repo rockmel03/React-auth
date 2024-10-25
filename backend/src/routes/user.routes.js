@@ -3,6 +3,7 @@ import {
   getAllUsers,
   getUserById,
   loginUser,
+  refreshUserTokens,
   registerUser,
 } from "../controllers/user.controller.js";
 import AuthMiddleware from "../middlewares/auth.middleware.js";
@@ -13,6 +14,7 @@ router.route("/").get(AuthMiddleware, getAllUsers);
 
 router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
+router.route("/refresh-token").post(refreshUserTokens);
 
 router.route("/:id").get(AuthMiddleware, getUserById);
 

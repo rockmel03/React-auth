@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import jwt from "jsonwebtoken";
 
 function generateAuthTokens(user) {
   try {
@@ -115,5 +116,36 @@ export const getUserById = async (req, res) => {
     res.status(200).json({ message: "user fetched sucessfully", user });
   } catch (error) {
     res.status(500).json({ error: "internal server error" });
+  }
+};
+
+export const refreshUserTokens = async (req, res) => {
+  const refreshToken = req.cookies?.refreshToken;
+
+  if (!refreshToken)
+    return res.status(403).json({ error: "refresh token not found" });
+  try {
+    const data = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET_KEY);
+
+    const user = await User.findById(data._id);
+    if (!user) return res.status(403).json({ error: "invalid refresh token" });
+
+    const { accessToken, refreshToken: newRefreshToken } =
+      generateAuthTokens(user);
+
+    res
+      .status(200)
+      .cookie("refreshToken", newRefreshToken, {
+        httpOnly: true, // Can't be accessed via JavaScript
+        secure: process.env.NODE_ENV === "production", // Sent only over HTTPS (use true in production)
+        sameSite: "Strict", // Helps mitigate CSRF attacks
+        maxAge: 2592000000, // Set the expiry to 30 days
+      })
+      .json({
+        message: "sucessfuly refresh tokens",
+        accessToken,
+      });
+  } catch (error) {
+    res.status(500).json({ error: "internal server error : " + error.message });
   }
 };
