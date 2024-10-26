@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import api from "../api/axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
 const REGISTER_URL = "users/register";
 
@@ -93,6 +95,7 @@ export const Register = () => {
         <br />
         <p
           ref={errRef}
+          aria-live="assertive"
           className={`px-2 py-1 rounded w-full bg-red-200 text-red-800 ${
             !error && "hidden"
           } transition-all duration-300 ease`}
@@ -100,7 +103,18 @@ export const Register = () => {
           {error}
         </p>
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-1">
-          <label htmlFor="username">Username</label>
+          <label htmlFor="username">
+            Username{" "}
+            {username && validUsername && (
+              <FontAwesomeIcon icon={faCheck} style={{ color: "#00ff4c" }} />
+            )}
+            {username && !validUsername && (
+              <FontAwesomeIcon
+                icon={faCircleXmark}
+                style={{ color: "#ff0000" }}
+              />
+            )}
+          </label>
           <input
             className={`px-2 py-1 rounded bg-white text-black w-full ${
               focusUser && username && !validUsername ? "outline-red-500" : ""
@@ -129,7 +143,18 @@ export const Register = () => {
             <br />
             Letters, numbers, underscores, hyphens allowed.
           </p>
-          <label htmlFor="password">Password</label>
+          <label htmlFor="password">
+            Password{" "}
+            {password && validPwd && (
+              <FontAwesomeIcon icon={faCheck} style={{ color: "#00ff4c" }} />
+            )}
+            {password && !validPwd && (
+              <FontAwesomeIcon
+                icon={faCircleXmark}
+                style={{ color: "#ff0000" }}
+              />
+            )}
+          </label>
           <input
             className={`px-2 py-1 rounded bg-white text-black w-full ${
               focusPwd && password && !validPwd ? "outline-red-500" : ""
@@ -163,7 +188,18 @@ export const Register = () => {
             <span aria-label="dollar sign">$</span>{" "}
             <span aria-label="percent">%</span>
           </p>
-          <label htmlFor="cnf-password">Confirm Password</label>
+          <label htmlFor="cnf-password">
+            Confirm Password{" "}
+            {cnfPassword && isPwdMatch && (
+              <FontAwesomeIcon icon={faCheck} style={{ color: "#00ff4c" }} />
+            )}
+            {cnfPassword && !isPwdMatch && (
+              <FontAwesomeIcon
+                icon={faCircleXmark}
+                style={{ color: "#ff0000" }}
+              />
+            )}
+          </label>
           <input
             className={`px-2 py-1 rounded bg-white text-black w-full ${
               focusCnfPwd && cnfPassword && !isPwdMatch ? "outline-red-500" : ""
