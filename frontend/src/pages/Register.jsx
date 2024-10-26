@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import api from "../api/axios";
+
+const REGISTER_URL = "users/register";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -6,6 +9,7 @@ const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 export const Register = () => {
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
+  const errRef = useRef(null);
 
   const [username, setUsername] = useState("");
   const [validUsername, setValidUsername] = useState(false);
@@ -21,16 +25,48 @@ export const Register = () => {
   const [isPwdMatch, setIsPwdMatch] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-      // if button enabled with JS hack
-      const v1 = USER_REGEX.test(username);
-      const v2 = PWD_REGEX.test(password);
-      if (!v1 || !v2) {
-          setError("Invalid Entry");
-          return;
+    // if button enabled with JS hack
+    const v1 = USER_REGEX.test(username);
+    const v2 = PWD_REGEX.test(password);
+    if (!v1 || !v2) {
+      setError("Invalid Entry");
+      return;
+    }
+
+    try {
+      const response = await api.post(
+        REGISTER_URL,
+        {
+          username,
+          password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      console.log(response);
+
+      setError("");
+      // reset fields
+      setUsername("");
+      setPassword("");
+      setCnfPassword("");
+    } catch (error) {
+      if (!error?.response) {
+        setError("No server response");
+      } else if (error.status === 403) {
+        setError("username already register");
+      } else {
+        setError(error.response.data.error);
       }
-    console.log(username, password);
+      errRef.current.focus(); //
+    }
   };
 
   useEffect(() => {
@@ -52,10 +88,11 @@ export const Register = () => {
 
   return (
     <section className="w-full min-h-screen flex flex-col items-center justify-center">
-      <div className="bg-blue-500 text-white p-5 rounded-lg  lg:min-w-[320px]">
+      <div className="bg-blue-500 text-white p-5 rounded-lg  md:min-w-[320px]">
         <h1 className="text-2xl font-semibold">Register</h1>
         <br />
         <p
+          ref={errRef}
           className={`px-2 py-1 rounded w-full bg-red-200 text-red-800 ${
             !error && "hidden"
           } transition-all duration-300 ease`}
