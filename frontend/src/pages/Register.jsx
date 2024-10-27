@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import api from "../api/axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import AuthContext from "../context/AuthContext";
 
 const REGISTER_URL = "users/register";
 
@@ -9,6 +10,8 @@ const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 export const Register = () => {
+  const { setToken } = useContext(AuthContext);
+
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
   const errRef = useRef(null);
@@ -54,7 +57,9 @@ export const Register = () => {
         }
       );
 
-      console.log(response);
+      const accessToken = response?.data?.accessToken;
+      setToken(accessToken);
+
       setSuccess(true);
 
       setError("");
