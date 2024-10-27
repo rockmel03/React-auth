@@ -1,4 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import AuthContext from "../context/AuthContext";
+
+import api from "../api/axios";
+const LOGIN_URL = "/users/login";
 
 export const Login = () => {
   const userRef = useRef(null);
@@ -10,6 +14,8 @@ export const Login = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
+  const { setToken } = useContext(AuthContext);
+
   useEffect(() => {
     userRef.current.focus();
   }, []);
@@ -20,10 +26,35 @@ export const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(username + ": " + password);
-    setUsername("");
-    setPassword("");
-    setSuccess(true);
+    if (!username || !password) {
+      setError("invalid entry");
+      return;
+    }
+
+    try {
+      const response = await api.post(
+        LOGIN_URL,
+        { username, password },
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+
+      const accessToken = response?.data?.accessToken;
+      setToken(accessToken);
+
+      setUsername("");
+      setPassword("");
+      setSuccess(true);
+    } catch (err) {
+      if (!err?.response) {
+        setError("No server response");
+      } else {
+        setError(err?.response?.data?.error);
+      }
+      errRef.current.focus();
+    }
   };
 
   return success ? (
