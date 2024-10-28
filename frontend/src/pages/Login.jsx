@@ -14,7 +14,7 @@ export const Login = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const { setToken } = useContext(AuthContext);
+  const { setAuth } = useContext(AuthContext);
 
   useEffect(() => {
     userRef.current.focus();
@@ -42,7 +42,8 @@ export const Login = () => {
       );
 
       const accessToken = response?.data?.accessToken;
-      setToken(accessToken);
+      const user = response?.data?.user;
+      setAuth({ user, accessToken });
 
       setUsername("");
       setPassword("");
