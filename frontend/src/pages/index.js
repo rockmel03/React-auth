@@ -4,3 +4,4 @@ export * from "./Home";
 export * from "./Admin";
 export * from "./Editor";
 export * from "./ErrorPage";
+export * from "./Unauthorized";
