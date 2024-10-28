@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { Layout } from "./components";
+import { Layout, RequireAuth } from "./components";
 import { Register, Login, Home, Admin, Editor, ErrorPage } from "./pages";
 
 export default function App() {
@@ -11,9 +11,11 @@ export default function App() {
         <Route path="/login" element={<Login />} />
 
         {/* protected routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/editor" element={<Editor />} />
+        <Route element={<RequireAuth />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/editor" element={<Editor />} />
+        </Route>
 
         {/* default route */}
         <Route path="*" element={<ErrorPage />} />
