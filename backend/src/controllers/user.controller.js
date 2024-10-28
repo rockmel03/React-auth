@@ -54,6 +54,12 @@ export const registerUser = async (req, res) => {
     const { accessToken, refreshToken } = generateAuthTokens(user);
 
     if (!accessToken || !refreshToken) throw Error("failed to generate tokens");
+
+    // Convert the user document to a plain object and delete sensitive fields
+    const userData = user.toObject();
+    delete userData.password;
+    delete userData.refreshToken;
+
     res
       .status(200)
       .cookie("refreshToken", refreshToken, {
@@ -65,6 +71,7 @@ export const registerUser = async (req, res) => {
       .json({
         message: "user registered sucessfully!",
         accessToken,
+        user: userData,
       });
   } catch (error) {
     res.status(500).json({ error: "internal server error" });
@@ -88,6 +95,11 @@ export const loginUser = async (req, res) => {
 
     if (!accessToken || !refreshToken) throw Error("failed to generate tokens");
 
+    // Convert the user document to a plain object and delete sensitive fields
+    const userData = user.toObject();
+    delete userData.password;
+    delete userData.refreshToken;
+
     res
       .status(200)
       .cookie("refreshToken", refreshToken, {
@@ -99,6 +111,7 @@ export const loginUser = async (req, res) => {
       .json({
         message: "user loged in",
         accessToken,
+        user: userData,
       });
   } catch (error) {
     res.status(500).json({ error: "internal server error" });
