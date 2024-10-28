@@ -7,10 +7,13 @@ import {
   registerUser,
 } from "../controllers/user.controller.js";
 import AuthMiddleware from "../middlewares/auth.middleware.js";
+import verifyRoles from "../middlewares/verifyRoles.middleware.js";
 
 const router = express.Router();
 
-router.route("/").get(AuthMiddleware, getAllUsers);
+router
+  .route("/")
+  .get(AuthMiddleware, verifyRoles("admin", "editor"), getAllUsers);
 
 router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
