@@ -59,15 +59,22 @@ userSchema.methods.generateAccessToken = function () {
   });
 };
 
-userSchema.methods.generateRefreshToken = function () {
+userSchema.methods.generateRefreshToken = async function () {
   const payload = {
     _id: this._id,
     username: this.username,
   };
 
-  return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET_KEY, {
+  // generate refresh token
+  const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET_KEY, {
     expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
   });
+
+  // save the refresh token in the database
+  this.refreshToken = refreshToken;
+  await this.save();
+
+  return refreshToken;
 };
 
 const User = mongoose.model("User", userSchema);
