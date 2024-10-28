@@ -1,10 +1,17 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 
 import api from "../api/axios";
 import useAuth from "../hooks/useAuth";
 const LOGIN_URL = "/users/login";
 
 export const Login = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+
+  const { setAuth } = useAuth();
+
   const userRef = useRef(null);
   const errRef = useRef(null);
 
@@ -12,9 +19,6 @@ export const Login = () => {
   const [password, setPassword] = useState("");
 
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
-
-  const { setAuth } = useAuth();
 
   useEffect(() => {
     userRef.current.focus();
@@ -47,7 +51,7 @@ export const Login = () => {
 
       setUsername("");
       setPassword("");
-      setSuccess(true);
+      navigate(from, { replace: true });
     } catch (err) {
       if (!err?.response) {
         setError("No server response");
@@ -58,14 +62,7 @@ export const Login = () => {
     }
   };
 
-  return success ? (
-    <div className="min-h-[400px] bg-blue-500 text-white p-5 rounded-lg md:min-w-[320px]">
-      <h1 className="text-2xl font-semibold">Login Succesful!</h1>
-      <a href="/home" className="hover:underline">
-        Back to Home
-      </a>
-    </div>
-  ) : (
+  return (
     <section className="bg-blue-500 text-white p-5 rounded-lg md:min-w-[320px]">
       <p
         ref={errRef}
@@ -107,9 +104,9 @@ export const Login = () => {
         <p className="text-sm">
           Don&apos;t have an account?{" "}
           {/* TODO: user react router Link component */}
-          <a href="/register" className="hover:underline">
+          <Link to="/register" className="hover:underline">
             Sign up here.
-          </a>
+          </Link>
         </p>
       </form>
     </section>
