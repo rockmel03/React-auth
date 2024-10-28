@@ -1,10 +1,23 @@
-import { Login, Register } from "./pages";
+import { Route, Routes } from "react-router-dom";
+import { Layout } from "./components";
+import { Register, Login, Home, Admin, Editor, ErrorPage } from "./pages";
 
 export default function App() {
   return (
-    <main className="bg-blue-400 w-full min-h-screen flex flex-col items-center justify-center">
-      {/* <Register /> */}
-      <Login />
-    </main>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        {/* public routes */}
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+
+        {/* protected routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/editor" element={<Editor />} />
+
+        {/* default route */}
+        <Route path="*" element={<ErrorPage />} />
+      </Route>
+    </Routes>
   );
 }
