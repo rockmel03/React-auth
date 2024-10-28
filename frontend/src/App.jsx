@@ -1,6 +1,20 @@
 import { Route, Routes } from "react-router-dom";
 import { Layout, RequireAuth } from "./components";
-import { Register, Login, Home, Admin, Editor, ErrorPage } from "./pages";
+import {
+  Register,
+  Login,
+  Home,
+  Admin,
+  Editor,
+  ErrorPage,
+  Unauthorized,
+} from "./pages";
+
+const ROLES = {
+  USER: "user",
+  ADMIN: "admin",
+  EDITOR: "editor",
+};
 
 export default function App() {
   return (
@@ -9,11 +23,24 @@ export default function App() {
         {/* public routes */}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/* protected routes */}
-        <Route element={<RequireAuth />}>
+        <Route
+          element={
+            <RequireAuth
+              allowedRoles={[ROLES.USER, ROLES.ADMIN, ROLES.EDITOR]}
+            />
+          }
+        >
           <Route path="/" element={<Home />} />
+        </Route>
+
+        <Route element={<RequireAuth allowedRoles={[ROLES.ADMIN]} />}>
           <Route path="/admin" element={<Admin />} />
+        </Route>
+
+        <Route element={<RequireAuth allowedRoles={[ROLES.EDITOR]} />}>
           <Route path="/editor" element={<Editor />} />
         </Route>
 
