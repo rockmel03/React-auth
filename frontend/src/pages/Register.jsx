@@ -3,6 +3,7 @@ import api from "../api/axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import useAuth from "../hooks/useAuth";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 
 const REGISTER_URL = "users/register";
 
@@ -11,6 +12,9 @@ const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 export const Register = () => {
   const { setAuth } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location?.state?.from?.pathname || "/";
 
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
@@ -29,8 +33,6 @@ export const Register = () => {
 
   const [isPwdMatch, setIsPwdMatch] = useState(false);
   const [error, setError] = useState("");
-
-  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,13 +63,14 @@ export const Register = () => {
       const user = response?.data?.user;
       setAuth({ user, accessToken });
 
-      setSuccess(true);
-
       setError("");
       // reset fields
       setUsername("");
       setPassword("");
       setCnfPassword("");
+
+      // navigate
+      navigate(from, { replace: true });
     } catch (error) {
       if (!error?.response) {
         setError("No server response");
@@ -97,14 +100,7 @@ export const Register = () => {
     usernameRef.current.focus();
   }, []);
 
-  return success ? (
-    <div className="min-h-[400px] bg-blue-500 text-white p-5 rounded-lg md:min-w-[320px]">
-      <h1 className="text-2xl font-semibold">Registration Succesful!</h1>
-      <a href="/home" className="hover:underline">
-        Back to Home
-      </a>
-    </div>
-  ) : (
+  return (
     <section className="bg-blue-500 text-white p-5 rounded-lg  md:min-w-[320px]">
       <p
         ref={errRef}
@@ -249,9 +245,9 @@ export const Register = () => {
       <br />
       <p className="text-sm">
         Already have an account? {/* TODO: user react router Link component */}
-        <a href="/login" className="hover:underline">
+        <Link to="/login" className="hover:underline">
           Login here.
-        </a>
+        </Link>
       </p>
     </section>
   );
