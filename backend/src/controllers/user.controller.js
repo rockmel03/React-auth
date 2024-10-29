@@ -1,10 +1,10 @@
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 
-function generateAuthTokens(user) {
+async function generateAuthTokens(user) {
   try {
-    const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
+    const accessToken = await user.generateAccessToken();
+    const refreshToken = await user.generateRefreshToken();
 
     return { accessToken, refreshToken };
   } catch (error) {
@@ -51,7 +51,7 @@ export const registerUser = async (req, res) => {
     const user = await User.create({ username, password });
 
     // generate tokens
-    const { accessToken, refreshToken } = generateAuthTokens(user);
+    const { accessToken, refreshToken } = await generateAuthTokens(user);
 
     if (!accessToken || !refreshToken) throw Error("failed to generate tokens");
 
@@ -91,7 +91,7 @@ export const loginUser = async (req, res) => {
     const isMatch = user.comparePassword(password);
     if (!isMatch) return res.send(400).json({ error: "invalid credentials" });
 
-    const { accessToken, refreshToken } = generateAuthTokens(user);
+    const { accessToken, refreshToken } = await generateAuthTokens(user);
 
     if (!accessToken || !refreshToken) throw Error("failed to generate tokens");
 
@@ -144,7 +144,7 @@ export const refreshUserTokens = async (req, res) => {
     if (!user) return res.status(403).json({ error: "invalid refresh token" });
 
     const { accessToken, refreshToken: newRefreshToken } =
-      generateAuthTokens(user);
+      await generateAuthTokens(user);
 
     res
       .status(200)
