@@ -8,6 +8,7 @@ import {
   Editor,
   ErrorPage,
   Unauthorized,
+  Profile,
 } from "./pages";
 
 const ROLES = {
@@ -42,6 +43,16 @@ export default function App() {
 
         <Route element={<RequireAuth allowedRoles={[ROLES.EDITOR]} />}>
           <Route path="/editor" element={<Editor />} />
+        </Route>
+
+        <Route
+          element={
+            <RequireAuth
+              allowedRoles={[ROLES.USER, ROLES.ADMIN, ROLES.EDITOR]}
+            />
+          }
+        >
+          <Route path="/profile/:id?" element={<Profile />} />
         </Route>
 
         {/* default route */}
