@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../api/axios";
-import useAuth from "../hooks/useAuth";
+import useApiPrivate from "../hooks/useApiPrivate";
 
 export const Users = () => {
-  const { auth } = useAuth();
-
+  const apiPrivate = useApiPrivate();
   const [users, setUsers] = useState(null);
 
   useEffect(() => {
@@ -14,12 +12,8 @@ export const Users = () => {
 
     const getUsers = async () => {
       try {
-        const response = await api.get("/users", {
+        const response = await apiPrivate.get("/users", {
           signal: controller.signal,
-          withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${auth.accessToken}`,
-          },
         });
         console.log(response);
         isMounted && setUsers(response.data?.users);
