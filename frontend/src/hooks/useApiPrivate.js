@@ -10,8 +10,8 @@ export default function useApiPrivate() {
   useEffect(() => {
     const requestInterceptor = apiPrivate.interceptors.request.use(
       (request) => {
-        if (auth?.accessToken) {
-          request.headers.Authorization = `Bearer ${auth?.accessToken}`;
+        if (!request.headers["Authorization"]) {
+          request.headers["Authorization"] = `Bearer ${auth?.accessToken}`;
         }
         return request;
       },
@@ -25,11 +25,9 @@ export default function useApiPrivate() {
 
         if (error?.response?.status === 401 && !prevRequest.sent) {
           prevRequest.sent = true;
-
           const accessToken = await refresh();
-          if (accessToken) {
-            prevRequest.headers.Authorization = `Bearer ${accessToken}`;
-          }
+          prevRequest.headers["Authorization"] = `Bearer ${accessToken}`;
+
           return apiPrivate(prevRequest);
         }
         return Promise.reject(error);
@@ -40,7 +38,7 @@ export default function useApiPrivate() {
       apiPrivate.interceptors.request.eject(requestInterceptor);
       apiPrivate.interceptors.response.eject(responseInterceptor);
     };
-  }, [auth.accessToken, refresh]);
+  }, [auth, refresh]);
 
   return apiPrivate;
 }
