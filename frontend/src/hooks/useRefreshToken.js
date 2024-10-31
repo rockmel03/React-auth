@@ -13,7 +13,11 @@ export default function useRefreshToken() {
           withCredentials: true,
         }
       );
-      setAuth((prev) => ({ ...prev, accessToken: response.data?.accessToken }));
+      setAuth((prev) => ({
+        ...prev,
+        user: response.data?.user,
+        accessToken: response.data?.accessToken,
+      }));
       return response.data?.accessToken;
     } catch (error) {
       console.error(error);
