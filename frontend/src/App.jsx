@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { Layout, RequireAuth } from "./components";
+import { Layout, PersistLogin, RequireAuth } from "./components";
 import {
   Register,
   Login,
@@ -27,32 +27,35 @@ export default function App() {
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/* protected routes */}
-        <Route
-          element={
-            <RequireAuth
-              allowedRoles={[ROLES.USER, ROLES.ADMIN, ROLES.EDITOR]}
-            />
-          }
-        >
-          <Route path="/" element={<Home />} />
-        </Route>
 
-        <Route element={<RequireAuth allowedRoles={[ROLES.ADMIN]} />}>
-          <Route path="/admin" element={<Admin />} />
-        </Route>
+        <Route element={<PersistLogin />}>
+          <Route
+            element={
+              <RequireAuth
+                allowedRoles={[ROLES.USER, ROLES.ADMIN, ROLES.EDITOR]}
+              />
+            }
+          >
+            <Route path="/" element={<Home />} />
+          </Route>
 
-        <Route element={<RequireAuth allowedRoles={[ROLES.EDITOR]} />}>
-          <Route path="/editor" element={<Editor />} />
-        </Route>
+          <Route element={<RequireAuth allowedRoles={[ROLES.ADMIN]} />}>
+            <Route path="/admin" element={<Admin />} />
+          </Route>
 
-        <Route
-          element={
-            <RequireAuth
-              allowedRoles={[ROLES.USER, ROLES.ADMIN, ROLES.EDITOR]}
-            />
-          }
-        >
-          <Route path="/profile/:id?" element={<Profile />} />
+          <Route element={<RequireAuth allowedRoles={[ROLES.EDITOR]} />}>
+            <Route path="/editor" element={<Editor />} />
+          </Route>
+
+          <Route
+            element={
+              <RequireAuth
+                allowedRoles={[ROLES.USER, ROLES.ADMIN, ROLES.EDITOR]}
+              />
+            }
+          >
+            <Route path="/profile/:id?" element={<Profile />} />
+          </Route>
         </Route>
 
         {/* default route */}
