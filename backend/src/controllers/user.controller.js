@@ -167,3 +167,34 @@ export const refreshUserTokens = async (req, res) => {
     res.status(500).json({ error: "internal server error : " + error.message });
   }
 };
+
+export const logoutUser = async (req, res) => {
+  try {
+    const refreshToken = req.cookies?.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(200).json({ message: "You are already logged out" });
+    }
+
+    const user = await User.findOneAndUpdate(
+      { refreshToken },
+      { refreshToken: "" }
+    );
+
+    if (!user) {
+      return res.status(200).json({ message: "You are already logged out" });
+    }
+
+    // Clear the refresh token cookie on the client
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+    });
+
+    return res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    // Return a 500 status for any unexpected errors
+    res.status(500).json({ error: "Internal server error: " + error.message });
+  }
+};

@@ -3,6 +3,7 @@ import {
   getAllUsers,
   getUserById,
   loginUser,
+  logoutUser,
   refreshUserTokens,
   registerUser,
 } from "../controllers/user.controller.js";
@@ -18,6 +19,7 @@ router
 router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
 router.route("/refresh-token").post(refreshUserTokens);
+router.route("/logout").get(logoutUser);
 
 router.route("/:id").get(AuthMiddleware, getUserById);
 
