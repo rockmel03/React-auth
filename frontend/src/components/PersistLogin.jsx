@@ -5,26 +5,30 @@ import { Outlet } from "react-router-dom";
 import { Loading } from "./Loading";
 
 export const PersistLogin = () => {
-  const { auth } = useAuth();
+  const { auth, persist } = useAuth();
   const refresh = useRefreshToken();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     const verifyRefreshToken = async () => {
       try {
         await refresh();
       } catch (error) {
         console.error(error.message);
       } finally {
-        setIsLoading(false);
+        isMounted && setIsLoading(false);
       }
     };
 
-    !auth?.accessToken && localStorage.getItem("isLoggedIn") 
-      ? verifyRefreshToken() 
+    !auth?.accessToken && localStorage.getItem("isLoggedIn")
+      ? verifyRefreshToken()
       : setIsLoading(false);
-  }, [refresh]);
 
-  return isLoading ? <Loading /> : <Outlet />;
+    //cleanup
+    return () => (isMounted = false);
+  }, [auth.accessToken, refresh]);
+
+  return !persist ? <Outlet /> : isLoading ? <Loading /> : <Outlet />;
 };
-

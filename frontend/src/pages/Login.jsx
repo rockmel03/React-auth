@@ -10,7 +10,7 @@ export const Login = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
-  const { setAuth } = useAuth();
+  const { setAuth, persist, setPersist } = useAuth();
 
   const userRef = useRef(null);
   const errRef = useRef(null);
@@ -63,6 +63,14 @@ export const Login = () => {
     }
   };
 
+  const togglePersist = () => {
+    setPersist((prev) => !prev);
+  };
+
+  useEffect(() => {
+    localStorage.setItem("persist", persist);
+  }, [persist]);
+
   return (
     <section className="bg-blue-500 text-white p-5 rounded-lg md:min-w-[320px]">
       <p
@@ -101,6 +109,16 @@ export const Login = () => {
         >
           Login
         </button>
+        <div className="flex items-center gap-2">
+          <input
+            className="w-[18px] h-[18px] rounded "
+            type="checkbox"
+            id="persist"
+            checked={persist}
+            onChange={togglePersist}
+          />
+          <label htmlFor="persist">Trust This Device</label>
+        </div>
         <br />
         <p className="text-sm">
           Don&apos;t have an account?{" "}
