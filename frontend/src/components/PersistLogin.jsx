@@ -15,14 +15,15 @@ export const PersistLogin = () => {
         await refresh();
       } catch (error) {
         console.error(error.message);
-        console.error(error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    !auth.accessToken ? verifyRefreshToken() : setIsLoading(false);
-  }, [auth.accessToken, refresh]);
+    !auth?.accessToken && localStorage.getItem("isLoggedIn") 
+      ? verifyRefreshToken() 
+      : setIsLoading(false);
+  }, [refresh]);
 
   return isLoading ? <Loading /> : <Outlet />;
 };

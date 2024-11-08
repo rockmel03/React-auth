@@ -47,6 +47,7 @@ export const Login = () => {
 
       const accessToken = response?.data?.accessToken;
       const user = response?.data?.user;
+      localStorage.setItem("isLoggedIn", true);
       setAuth({ user, accessToken });
 
       setUsername("");
