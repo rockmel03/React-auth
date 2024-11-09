@@ -3,7 +3,6 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 
 import api from "../api/axios";
 import useAuth from "../hooks/useAuth";
-import useLocalStorage from "../hooks/useLocalStorage";
 import useInput from "../hooks/useInput";
 const LOGIN_URL = "/users/login";
 
@@ -17,8 +16,7 @@ export const Login = () => {
   const userRef = useRef(null);
   const errRef = useRef(null);
 
-  // const [username, setUsername] = useLocalStorage("username", "");
-  const [username, resetUsername, usernameAttribs] = useInput("");
+  const [username, resetUsername, usernameAttribs] = useInput("username", "");
   const [password, setPassword] = useState("");
 
   const [error, setError] = useState("");
@@ -53,7 +51,6 @@ export const Login = () => {
       localStorage.setItem("isLoggedIn", true);
       setAuth({ user, accessToken });
 
-      // setUsername("");
       resetUsername("");
       setPassword("");
       navigate(from, { replace: true });
