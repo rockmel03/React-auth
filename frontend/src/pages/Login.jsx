@@ -4,6 +4,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import api from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import useInput from "../hooks/useInput";
+import useToggle from "../hooks/useToggle";
 const LOGIN_URL = "/users/login";
 
 export const Login = () => {
@@ -11,7 +12,8 @@ export const Login = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
-  const { setAuth, persist, setPersist } = useAuth();
+  const { setAuth } = useAuth();
+  const [persist, togglePersist] = useToggle("persist", false);
 
   const userRef = useRef(null);
   const errRef = useRef(null);
@@ -63,14 +65,6 @@ export const Login = () => {
       errRef.current.focus();
     }
   };
-
-  const togglePersist = () => {
-    setPersist((prev) => !prev);
-  };
-
-  useEffect(() => {
-    localStorage.setItem("persist", persist);
-  }, [persist]);
 
   return (
     <section className="bg-blue-500 text-white p-5 rounded-lg md:min-w-[320px]">
