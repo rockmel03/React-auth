@@ -4,6 +4,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import api from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import useLocalStorage from "../hooks/useLocalStorage";
+import useInput from "../hooks/useInput";
 const LOGIN_URL = "/users/login";
 
 export const Login = () => {
@@ -16,7 +17,8 @@ export const Login = () => {
   const userRef = useRef(null);
   const errRef = useRef(null);
 
-  const [username, setUsername] = useLocalStorage("username", "");
+  // const [username, setUsername] = useLocalStorage("username", "");
+  const [username, resetUsername, usernameAttribs] = useInput("");
   const [password, setPassword] = useState("");
 
   const [error, setError] = useState("");
@@ -51,7 +53,8 @@ export const Login = () => {
       localStorage.setItem("isLoggedIn", true);
       setAuth({ user, accessToken });
 
-      setUsername("");
+      // setUsername("");
+      resetUsername("");
       setPassword("");
       navigate(from, { replace: true });
     } catch (err) {
@@ -92,8 +95,8 @@ export const Login = () => {
           id="username"
           autoComplete="off"
           className="px-2 py-1 rounded bg-white text-black w-full"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          {...usernameAttribs}
+          required
         />
         <label htmlFor="password">Password </label>
         <input
@@ -102,6 +105,7 @@ export const Login = () => {
           className="px-2 py-1 rounded bg-white text-black w-full"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <button
           className="px-2 py-2 mt-2 rounded bg-blue-700 hover:bg-blue-800 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
