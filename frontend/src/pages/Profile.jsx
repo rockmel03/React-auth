@@ -3,6 +3,7 @@ import api from "../api/axios";
 import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { Loading } from "../components";
+import { jwtDecode } from "jwt-decode";
 
 export const Profile = () => {
   const { id } = useParams();
@@ -20,21 +21,39 @@ export const Profile = () => {
         },
       });
       setUser(response.data?.user);
+      setError(null);
     } catch (error) {
-      if (!error.status) {
-        setError("No server response");
-      } else {
-        setError(error?.response?.data?.error);
-      }
+      const message = error?.response?.data?.error || "No server response";
+      setError(message);
+      setUser(null); // Clear user data if fetch fails
+      throw error;
     }
   };
 
   useEffect(() => {
-    if (id) {
-      fetchUser(id);
-    } else if (auth?.user?._id) {
-      fetchUser(auth?.user?._id);
-    }
+    // Reset user and error before refetching
+    setUser(null);
+    setError(null);
+
+    const fetchUserData = async () => {
+      try {
+        if (id) {
+          await fetchUser(id);
+        } else if (auth?.accessToken) {
+          const decodedPayload = jwtDecode(auth.accessToken);
+          if (decodedPayload?._id) {
+            await fetchUser(decodedPayload._id);
+          } else {
+            setError("Invalid user identity");
+          }
+        }
+      } catch (error) {
+        setError("Failed to fetch user data");
+        console.error("Error fetching user:", error);
+      }
+    };
+
+    fetchUserData();
   }, [id, auth]);
 
   return (
@@ -45,7 +64,7 @@ export const Profile = () => {
         <div>
           <p>username: {user.username}</p>
           <p>email: {`${user?.email}`}</p>
-          <p>verified: {`${user?.isVerified}`}</p>
+          <p>verified: {user?.isVerified ? "Yes" : "No"}</p>
           <p>role: {user?.role}</p>
         </div>
       ) : (
