@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       unique: true,
-      sparse: true,  // Allows multiple `null` emails without conflict
+      sparse: true, // Allows multiple `null` emails without conflict
       lowercase: true,
       trim: true,
     },
@@ -52,7 +52,7 @@ userSchema.methods.comparePassword = function (password) {
 userSchema.methods.generateAccessToken = function () {
   const payload = {
     _id: this._id,
-    roles: this.roles,
+    role: this.role,
   };
 
   return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET_KEY, {
