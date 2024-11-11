@@ -146,10 +146,6 @@ export const refreshUserTokens = async (req, res) => {
     const { accessToken, refreshToken: newRefreshToken } =
       await generateAuthTokens(user);
 
-    const userObj = user.toObject();
-    delete userObj.password;
-    delete userObj.refreshToken;
-
     res
       .status(200)
       .cookie("refreshToken", newRefreshToken, {
@@ -161,7 +157,6 @@ export const refreshUserTokens = async (req, res) => {
       .json({
         message: "sucessfuly refresh tokens",
         accessToken,
-        user: userObj,
       });
   } catch (error) {
     res.status(500).json({ error: "internal server error : " + error.message });

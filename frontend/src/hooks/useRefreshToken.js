@@ -15,7 +15,6 @@ export default function useRefreshToken() {
       );
       setAuth((prev) => ({
         ...prev,
-        user: response.data?.user,
         accessToken: response.data?.accessToken,
       }));
       return response.data?.accessToken;
