@@ -33,12 +33,11 @@ const Login = () => {
     try {
       const userData = await login({ username: user, password }).unwrap();
       dispatch(setCredentials({ ...userData, user }));
-      console.log(userData);
+
       setUser("");
       setPassword("");
       navigate("/welcome");
     } catch (error) {
-      console.log(error);
       if (!error?.data) {
         setErrMsg("No server response");
       } else {
