@@ -39,10 +39,10 @@ const Login = () => {
       navigate("/welcome");
     } catch (error) {
       console.log(error);
-      if (!error?.originalStatus) {
-        setError("No server response");
+      if (!error?.data) {
+        setErrMsg("No server response");
       } else {
-        setError("Login Failed!");
+        setErrMsg(error?.data?.error);
       }
       errRef.current.focus();
     }
