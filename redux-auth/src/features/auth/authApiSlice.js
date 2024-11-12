@@ -11,3 +11,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
     }),
   }),
 });
+
+export const {
+  useLoginMutation, // automatically generated if it is an mutation it ends with mutation or if it is query it ends with query
+} = authApiSlice;
