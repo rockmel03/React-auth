@@ -4,11 +4,11 @@ import authReducer from "../features/auth/authSlice";
 
 export const store = configureStore({
   reducer: {
-    [apiSlice.reducerPath]: apiSlice.provider,
+    [apiSlice.reducerPath]: apiSlice.reducer,
     auth: authReducer,
   },
   middleware: (getDefaultMiddleware) => {
-    getDefaultMiddleware().concat(apiSlice.middleware);
+    return getDefaultMiddleware().concat(apiSlice.middleware);
   },
   devTools: !import.meta.env.PROD, // incase production disable redux dev tools
 });
