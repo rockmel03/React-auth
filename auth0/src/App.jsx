@@ -1,4 +1,4 @@
-import { LoginButton, LogoutButton } from "./components";
+import { LoginButton, LogoutButton, Profile } from "./components";
 
 export default function App() {
   return (
@@ -6,6 +6,7 @@ export default function App() {
       <h1>Auth0 Login</h1>
       <LoginButton />
       <LogoutButton />
+      <Profile />
     </main>
   );
 }
